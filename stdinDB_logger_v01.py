@@ -26,6 +26,7 @@
 #
 # special ............: 
 #                       rsync -avrq --log-file=/dev/stdout /home/gro/shares/VM_Share_nbch0052_001/ /home/gro/Documents/backup_20180530/
+#                       rsync -avrq --log-file=/dev/stdout /home/gro/shares/VM_Share_nbch0052_001/ /home/gro/Documents/backup_20180530/ | /home/gro/.../mm_stdinDB_logger/stdinDB_logger_v01.py -d /home/gro/lalalog_ä.db -t log_t2_20180601
 #
 #                       2018/05/30 09:26:40 [33325] cd+++++++++ gro_test/sql-database-python-manage/.git/objects/fc/
 #                       2018/05/30 09:26:40 [33325] >f+++++++++ gro_test/sql-database-python-manage/.git/objects/fc/b3ea48648ce089aea164a7fc96f58651b746f3
@@ -116,6 +117,7 @@ def DMS_upload_doc(parameters):
     try: 
         for line in iter(sys.stdin.readline, b''):				# read stdin line by line
             line = line.encode('utf8')						# encode the line string into utf8
+            #line = unicode(line, "cp1252", errors="ingnore")			# encode
             #print str.split(' ', 1 )
             #print (line)
             fields = line.split( )						# split the line into fields using space as separator
