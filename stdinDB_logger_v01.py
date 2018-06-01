@@ -115,6 +115,7 @@ def DMS_upload_doc(parameters):
 #    
     try: 
         for line in iter(sys.stdin.readline, b''):				# read stdin line by line
+            line = line.encode('utf8')						# encode the line string into utf8
             #print str.split(' ', 1 )
             #print (line)
             fields = line.split( )						# split the line into fields using space as separator
