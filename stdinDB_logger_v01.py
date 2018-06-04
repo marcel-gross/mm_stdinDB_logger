@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
+#!/usr/bin/env python3
 ###############################################################################
 #
 # stdinDB_logger_v01.py : standard-in DB logger
@@ -115,10 +116,9 @@ def DMS_upload_doc(parameters):
 # read : stdin line by line and split a line into 4 Fields subsequently write the record into the table of the DB-File
 #    
     try: 
-        for line in iter(sys.stdin.readline, b''):				# read stdin line by line
-            line = line.encode('utf8')						# encode the line string into utf8
-            #line = unicode(line, "cp1252", errors="ingnore")			# encode
-            #print str.split(' ', 1 )
+        for line in iter(sys.stdin.readline, b''):				# read stdin line by line - python v 2.7
+        #for line in iter(sys.stdin.readline, ''):				# read stdin line by line - python v 3.x
+            #print (str.split(' ', 1 ))
             #print (line)
             fields = line.split( )						# split the line into fields using space as separator
             numfields = len(fields)						# evaluate the resulting number of fields in this line
@@ -126,7 +126,7 @@ def DMS_upload_doc(parameters):
             if numfields > 3:							# we need at least 4 fields for a log-record
 #
                logdate = str(fields[0])						# Field 1 -> Date  (usualy comming in format 2018/05/27)
-               logtime = str(fields[1])						# Field 2 -> Tiime (usualy comming in format 12:27:02)
+               logtime = str(fields[1])						# Field 2 -> Time (usualy comming in format 12:27:02)
                logproc = str(fields[2])						# Field 3 -> Process ID (usualy comming in format [31258]
                logtext = ' '.join(map(str, fields[3:]))				# Field 4-bis should all be merged and end up in the LOG_Text
 #
@@ -136,6 +136,11 @@ def DMS_upload_doc(parameters):
                LOG_TimeStamp = str(logdate + " " + logtime)
                LOG_Process   = str(logproc)
                LOG_Text      = str(logtext)
+#
+               if sys.version_info < (3,0) :
+                  LOG_TimeStamp = unicode(LOG_TimeStamp, "cp1252", errors="ingnore")	# encode the string into utf8
+                  LOG_Process   = unicode(LOG_Process, "cp1252", errors="ingnore")
+                  LOG_Text      = unicode(LOG_Text, "cp1252", errors="ingnore")
 #
                #print ("date: " + str(logdate) + " time: " + str(logtime) + " process: "+ str(logproc) + " text: "+ str(logtext) + ".")
                write_data_into_table(TABLENAME, LOG_TimeStamp, LOG_Process, LOG_Text)
@@ -162,26 +167,26 @@ def get_parameters(argv):
     try:
        opts, args = getopt.getopt(argv,"hd:t:",["DBfile=","table="])
     except getopt.GetoptError:
-       print 'stdinDB_logger_v01.py -d <DBfile> -t <table>'
+       print ('stdinDB_logger_v01.py -d <DBfile> -t <table>')
        sys.exit(2)
     #print (opts)
     for opt, arg in opts:
        if opt == '-h':
-          print 'stdinDB_logger_v01.py -d <DBfile> -t <table>'
+          print ('stdinDB_logger_v01.py -d <DBfile> -t <table>')
           sys.exit()
        elif opt in ("-d", "--DBfile"):
           FILENAME = arg
        elif opt in ("-t", "--table"):
           TABLENAME = arg
-    #print 'DBfile is ', FILENAME
-    #print 'Table  is ', TABLENAME
+    #print ('DBfile is ', FILENAME)
+    #print ('Table  is ', TABLENAME)
     if FILENAME == '':
-       print 'parameter -d <DBfile> is missing'
+       print ('parameter -d <DBfile> is missing')
        sys.exit(2)
     if TABLENAME == '':
        TABLENAME = "log_data"
     if "-" in TABLENAME: 
-       print 'parameter -t <table> contains nonvalid characters. (- not allowed)'
+       print ('parameter -t <table> contains nonvalid characters. (- not allowed)')
        sys.exit(2)    
        
     return (FILENAME, TABLENAME)
@@ -248,8 +253,8 @@ def create_tables(TABLENAME):
 if __name__ == '__main__':
 #
     parameters  = sys.argv[1:]
-    #print "sys.argv : " + str(sys.argv[1:]) + "\n"
-    #print "parameter: " + str(parameters) + "\n"
+    #print ("sys.argv : " + str(sys.argv[1:]) + "\n")
+    #print ("parameter: " + str(parameters) + "\n")
     DMS_upload_doc(parameters)
 #
 ### END #######################################################################
